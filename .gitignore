@@ -67,3 +67,6 @@ infra/
 
 # Local-only Docker Compose overrides (machine-specific port workarounds, etc.)
 docker-compose.override.yml
+
+# Homelab-only secrets for Traefik/Let's Encrypt (DUCKDNS_TOKEN, ACME_EMAIL) - never commit
+.env
