@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: arkhan
+      POSTGRES_DB: bike_service_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: ./backend-spring
+    env_file:
+      - ./backend-spring/.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bike_service_db
+    ports:
+      - "8888:8080"
+    depends_on:
+      - postgres
+  frontend:
+    build:
+      context: ./frontend-react
+      args:
+        REACT_APP_API_URL: http://localhost:8888/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+volumes:
+  postgres_data:

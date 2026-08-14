@@ -61,3 +61,6 @@ backend-spring/.env.local
 backend-spring/.env.development.local
 backend-spring/.env.test.local
 backend-spring/.env.production.local
+
+# infra/ is a separate project (will live in its own repo eventually)
+infra/
