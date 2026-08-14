@@ -64,3 +64,6 @@ backend-spring/.env.production.local
 
 # infra/ is a separate project (will live in its own repo eventually)
 infra/
+
+# Local-only Docker Compose overrides (machine-specific port workarounds, etc.)
+docker-compose.override.yml
