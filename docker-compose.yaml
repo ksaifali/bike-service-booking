@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: arkhan
@@ -9,22 +10,32 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
   backend:
     build:
       context: ./backend-spring
+    image: ghcr.io/ksaifali/bike-service-backend:latest
+    restart: unless-stopped
     env_file:
       - ./backend-spring/.env
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bike_service_db
     ports:
-      - "8888:8080"
+      - "8080:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
   frontend:
     build:
       context: ./frontend-react
       args:
         REACT_APP_API_URL: http://localhost:8888/api
+    image: ghcr.io/ksaifali/bike-service-frontend:latest
+    restart: unless-stopped
     ports:
       - "3000:80"
     depends_on:
