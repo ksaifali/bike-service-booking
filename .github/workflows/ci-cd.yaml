@@ -103,7 +103,7 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
-          cat > .env << 'EOF'
+          cat > .env << EOF
           DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
           ACME_EMAIL=${ACME_EMAIL}
           DB_PASSWORD=${DB_PASSWORD}
