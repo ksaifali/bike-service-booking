@@ -81,6 +81,11 @@ jobs:
     needs: build-and-push
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: self-hosted
+    env:
+      DUCKDNS_TOKEN: ${{ secrets.DUCKDNS_TOKEN }}
+      ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -90,6 +95,15 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create production .env file
+        run: |
+          cat > .env << 'EOF'
+          DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
+          ACME_EMAIL=${ACME_EMAIL}
+          DB_PASSWORD=${DB_PASSWORD}
+          JWT_SECRET_KEY=${JWT_SECRET_KEY}
+          EOF
 
       - name: Pull latest images and restart
         run: |
