@@ -97,6 +97,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create production .env file
+        env:
+          DUCKDNS_TOKEN: ${{ secrets.DUCKDNS_TOKEN }}
+          ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           cat > .env << 'EOF'
           DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
