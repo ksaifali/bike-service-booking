@@ -1,4 +1,8 @@
 services:
+  postgres:
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+
   traefik:
     image: traefik:v3.5
     container_name: traefik
@@ -30,6 +34,16 @@ services:
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
 
   backend:
+    env_file:
+      - ./backend-spring/.env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/bike_service_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - FRONTEND_URL=https://bikeservice.duckdns.org
+      - SERVER_PORT=8080
+      - SERVER_CONTEXT_PATH=/api
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.backend.rule=Host(`bikeservice.duckdns.org`) && PathPrefix(`/api`)"
