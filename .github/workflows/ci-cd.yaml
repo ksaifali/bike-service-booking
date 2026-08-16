@@ -83,11 +83,36 @@ jobs:
     runs-on: self-hosted
     env:
       DUCKDNS_TOKEN: ${{ secrets.DUCKDNS_TOKEN }}
+      HOMELAB_IPV6: ${{ vars.HOMELAB_IPV6 }}
       ACME_EMAIL: ${{ secrets.ACME_EMAIL }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Update DuckDNS IPv4 and IPv6 records
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${HOMELAB_IPV6}" ]]; then
+            echo "HOMELAB_IPV6 repository variable is not configured."
+            exit 1
+          fi
+
+          PUBLIC_IPV4="$(curl --ipv4 --fail --silent --show-error https://api.ipify.org)"
+          RESPONSE="$(curl --fail --silent --show-error --get https://www.duckdns.org/update \
+            --data-urlencode "domains=bikeservice" \
+            --data-urlencode "token=${DUCKDNS_TOKEN}" \
+            --data-urlencode "ip=${PUBLIC_IPV4}" \
+            --data-urlencode "ipv6=${HOMELAB_IPV6}")"
+
+          if [[ "${RESPONSE}" != "OK" ]]; then
+            echo "DuckDNS update failed: ${RESPONSE}"
+            exit 1
+          fi
+
+          echo "DuckDNS IPv4 and IPv6 records updated successfully."
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
