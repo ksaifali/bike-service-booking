@@ -2,6 +2,8 @@ services:
   postgres:
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - /srv/bike-service-booking/postgres-data:/var/lib/postgresql/data
 
   traefik:
     image: traefik:v2.11
