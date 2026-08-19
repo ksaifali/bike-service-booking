@@ -2,6 +2,7 @@ services:
   postgres:
     environment:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - /srv/bike-service-booking/postgres-data:/var/lib/postgresql/data
 
